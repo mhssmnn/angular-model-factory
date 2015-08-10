@@ -504,7 +504,7 @@ module.provider('$modelFactory', function(){
                  */
                 instance.$rollback = function(version) {
                     var prevCommit = commits[version || commits.length - 1];
-                    instance.$update(JSON.parse(prevCommit));
+                    instance.$update(new Model(JSON.parse(prevCommit)));
                     return instance;
                 };
 
