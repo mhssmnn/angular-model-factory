@@ -758,6 +758,15 @@ describe('A person model defined using modelFactory', function() {
             $httpBackend.flush();
         });
 
+        it('should work with POST and no variables', function (){
+            var person = new PersonModel();
+
+            person.$serverCopy();
+
+            $httpBackend.expectPOST('/api/people/copy').respond(200, []);
+            $httpBackend.flush();
+        });
+
         it('should work with POST and name variable', function(){
             var person = new PersonModel({
               name: 'juri'
