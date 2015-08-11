@@ -722,6 +722,10 @@ module.provider('$modelFactory', function(){
              * https://github.com/geraintluff/uri-templates
              */
             Model.$url = function(u, params, method){
+                if (params === undefined) {
+                    params = {};
+                }
+
                 var uri = new UriTemplate(u || url)
                             .fill(function(variableName){
                                 var resolvedVariable = params[variableName];
@@ -748,6 +752,9 @@ module.provider('$modelFactory', function(){
                 if(options.stripTrailingSlashes){
                     uri = uri.replace(/\/+$/, '') || '/';
                 }
+
+                // Clean double slashes
+                uri = uri.replace(/\/+/, '/');
 
                 return uri;
             };
