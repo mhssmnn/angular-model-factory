@@ -233,7 +233,7 @@ describe('A person model defined using modelFactory', function() {
             });
 
 
-            xit('should return the requested resource by its id when passing it as object', function() {
+            it('should return the requested resource by its id when passing it as object', function() {
                 PersonModel.get({
                     id: 123
                 });
