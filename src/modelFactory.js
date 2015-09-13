@@ -395,7 +395,7 @@ module.provider('$modelFactory', function(){
                         // if its a function, invoke it,
                         // this would be helpful for seralizers
                         // like: map: { date: function(val){ return moment(val) } }
-                        value[k] = v(value[k], value);
+                        value[k] = v.call(instance, value[k], value);
                     } else {
                         value[k] = value[v];
                         delete value[v];
