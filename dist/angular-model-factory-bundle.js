@@ -1,6 +1,6 @@
 /**
  * modelFactory makes working with RESTful APIs in AngularJS easy
- * @version v0.4.5 - 2015-07-22
+ * @version v0.4.5 - 2015-09-14
  * @link http://swimlane.github.io/angular-model-factory/
  * @author Austin McDaniel <amcdaniel2@gmail.com>, Juri Strumpflohner <juri.strumpflohner@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -808,7 +808,7 @@ module.provider('$modelFactory', function(){
                         // if its a function, invoke it,
                         // this would be helpful for seralizers
                         // like: map: { date: function(val){ return moment(val) } }
-                        value[k] = v(value[k], value);
+                        value[k] = v.call(instance, value[k], value);
                     } else {
                         value[k] = value[v];
                         delete value[v];
@@ -917,7 +917,7 @@ module.provider('$modelFactory', function(){
                  */
                 instance.$rollback = function(version) {
                     var prevCommit = commits[version || commits.length - 1];
-                    instance.$update(JSON.parse(prevCommit));
+                    instance.$update(new Model(JSON.parse(prevCommit)));
                     return instance;
                 };
 
@@ -1031,8 +1031,7 @@ module.provider('$modelFactory', function(){
                         // if its a GET request and its not the above, we can assume
                         // you want to do a query param like:
                         // ZooModel.query({ type: 'panda' }) and do /api/zoo?type=panda
-                        data = { param: data };
-                        uri += '{?param*}';
+                        uri += '{?' + Object.keys(data).join(',') +'*}';
                     }
                 } else {
                     uri = clone.url;
@@ -1135,6 +1134,10 @@ module.provider('$modelFactory', function(){
              * https://github.com/geraintluff/uri-templates
              */
             Model.$url = function(u, params, method){
+                if (params === undefined) {
+                    params = {};
+                }
+
                 var uri = new UriTemplate(u || url)
                             .fill(function(variableName){
                                 var resolvedVariable = params[variableName];
@@ -1161,6 +1164,9 @@ module.provider('$modelFactory', function(){
                 if(options.stripTrailingSlashes){
                     uri = uri.replace(/\/+$/, '') || '/';
                 }
+
+                // Clean double slashes
+                uri = uri.replace(/\/+/, '/');
 
                 return uri;
             };
